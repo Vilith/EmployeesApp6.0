@@ -35,7 +35,7 @@ namespace EmployeesApp.Web.Tests
         }
 
         [Theory]
-        [InlineData("email@email.com", "namn", 3, false)]        
+        [InlineData("email@email.com", "namn", 3, false)]
         [InlineData("", "name", 4, false)]
         [InlineData("mail@mail.com", "", 4, false)]
         [InlineData("other@other.com", "other", 4, true)]
@@ -54,7 +54,7 @@ namespace EmployeesApp.Web.Tests
             //Assert
             if (expected)
             {
-                var redirect = Assert.IsType<RedirectToActionResult>(result);                               
+                var redirect = Assert.IsType<RedirectToActionResult>(result);
                 Assert.Equal("Index", redirect.ActionName);
                 mockService.Verify(s => s.Add(It.Is<Employee>(e =>
                     e.Email == email &&
@@ -62,10 +62,34 @@ namespace EmployeesApp.Web.Tests
             }
             else
             {
-                var view = Assert.IsType<ViewResult>(result); 
+                var view = Assert.IsType<ViewResult>(result);
                 Assert.Null(view.ViewName);
                 mockService.Verify(s => s.Add(It.IsAny<Employee>()), Times.Never);
-            }           
+            }
+        }
+
+        [Fact]
+        public void Details_WithId_ReturnsViewResult()
+        {
+            //Arrange
+            var employeeService = new Mock<IEmployeeService>();
+            var employeeController = new EmployeesController(employeeService.Object);
+            var employee = new Employee
+            {
+                Name = "Alice",
+                Email = "alice@example.com"
+            };
+
+            employeeService.Setup(service => service.GetById(1))
+                .Returns(employee);
+
+            //Act
+
+            var result = employeeController.Details(1);
+
+            //Assert
+            Assert.IsType<ViewResult>(result);
+            employeeService.Verify(s => s.GetById(1), Times.Once);
         }
 
         //Helpfunction for validation of the model state 
