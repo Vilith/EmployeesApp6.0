@@ -1,5 +1,6 @@
 ﻿using EmployeesApp.Application.Employees.Interfaces;
 using EmployeesApp.Domain.Entities;
+using EmployeesApp.Infrastructure.Persistance.Repositories;
 using EmployeesApp.Web.Controllers;
 using EmployeesApp.Web.Views.Employees;
 using Microsoft.AspNetCore.Cors.Infrastructure;
@@ -39,7 +40,11 @@ namespace EmployeesApp.Web.Tests
         {
             //Arrange
             var viewModel = new CreateVM { Email = email, Name = Name, BotCheck = botcheck };
-            var employeeService = new Mock<IEmployeeService>();
+            var employeeRepository = new Mock<IEmployeeRepository>();
+            employeeRepository.Setup(o => o.Add(new Employee()));
+
+            var employeeService = new Mock<IEmployeeService>(employeeRepository.Object);
+
 
             var employeeController = new EmployeesController(employeeService.Object);
 
@@ -52,7 +57,7 @@ namespace EmployeesApp.Web.Tests
 
 
             //Assert
-            //Assert.Equal(viewModel, result);
+
             Assert.IsType<ViewResult>(result);
         }
     }
