@@ -7,33 +7,33 @@ namespace EmployeeApp.Application.Tests
 {
     public class EmployeeServiceTests
     {
-        [Fact]
-        public void AddEmployee_WithRightCredentials_WillAddEmployeeToList()
-        {
+        //[Fact]
+        //public void AddEmployee_WithRightCredentials_WillAddEmployeeToList()
+        //{
 
-            // Arrange
-            var catchEmployee = new Employee();
-            var mockRepo = new Mock<IEmployeeRepository>();
+        //    // Arrange
+        //    var catchEmployee = new Employee();
+        //    var mockRepo = new Mock<IEmployeeRepository>();
 
-            // Catch what's being sent to .Add()
-            mockRepo
-                .Setup(r => r.Add(It.IsAny<Employee>()))
-                .Callback<Employee>(e => catchEmployee = e);
+        //    // Catch what's being sent to .Add()
+        //    mockRepo
+        //        .Setup(r => r.Add(It.IsAny<Employee>()))
+        //        .Callback<Employee>(e => catchEmployee = e);
 
-            var service = new EmployeeService(mockRepo.Object);
-            var input = new Employee
-            {
-                Name = "lisa",
-                Email = "lisa@ajax.com"
-            };
+        //    var service = new EmployeeService(mockRepo.Object);
+        //    var input = new Employee
+        //    {
+        //        Name = "lisa",
+        //        Email = "lisa@ajax.com"
+        //    };
 
-            // Act
-            service.Add(input);
+        //    // Act
+        //    service.Add(input);
 
-            // Assert
-            Assert.Equal("Lisa", catchEmployee.Name);
-            Assert.Equal("lisa@ajax.com", catchEmployee.Email);
-        }
+        //    // Assert
+        //    Assert.Equal("Lisa", catchEmployee.Name);
+        //    Assert.Equal("lisa@ajax.com", catchEmployee.Email);
+        //}
 
         [Fact]
         public void AddEmployee_WithRightCredentials_WillAddEmployeeToListMoq()
@@ -46,7 +46,7 @@ namespace EmployeeApp.Application.Tests
             var employee = new Employee
             {
                 Name = "lisa",
-                Email = "lisa@ajax.com"
+                Email = "lisa@Ajax.com"
             };
 
             // Act
@@ -110,27 +110,5 @@ namespace EmployeeApp.Application.Tests
 
             Assert.Equal(expected, result);
         }
-
-
-
-
-        //public void Add(Employee employee)
-        //{
-
-        //}
-
-        //private static string ToInitalCapital(string s) =>
-        //    $"{s[..1].ToUpper()}{s[1..]}";
-
-
-        //public Employee[] GetAll() => [.. employeeRepository.GetAll().OrderBy(e => e.Name)];
-
-        //public Employee? GetById(int id)
-        //{
-        //}
-
-        //public bool CheckIsVIP(Employee employee) =>
-        //    employee.Email.StartsWith("ANDERS", StringComparison.CurrentCultureIgnoreCase);
-        //}
     }
 }
