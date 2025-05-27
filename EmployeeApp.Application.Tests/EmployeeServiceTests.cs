@@ -10,19 +10,29 @@ namespace EmployeeApp.Application.Tests
         [Fact]
         public void AddEmployee_WithRightCredentials_WillAddEmployeeToList()
         {
+
             // Arrange
-            var employeeRepository = new Mock<IEmployeeRepository>();
-            //employeeRepository.Setup(o => o.Add(new Employee {Name="Ronald", Email="ronald@mcdonnald.com" }));
-            var employeeService = new EmployeeService(employeeRepository.Object);
+            var catchEmployee = new Employee();
+            var mockRepo = new Mock<IEmployeeRepository>();
+
+            // Catch what's being sent to .Add()
+            mockRepo
+                .Setup(r => r.Add(It.IsAny<Employee>()))
+                .Callback<Employee>(e => catchEmployee = e);
+
+            var service = new EmployeeService(mockRepo.Object);
+            var input = new Employee
+            {
+                Name = "lisa",
+                Email = "lisa@ajax.com"
+            };
 
             // Act
-            Employee newEmployee = new Employee { Name="Ronald", Email="ronald@mcdonnald.com" };
-            employeeService.Add(newEmployee);
+            service.Add(input);
 
             // Assert
-            var employeeLista = employeeService.GetAll();
-            Assert.Contains(newEmployee, employeeLista);
-                //repository.verify
+            Assert.Equal("Lisa", catchEmployee.Name);
+            Assert.Equal("lisa@ajax.com", catchEmployee.Email);
         }
 
         //public void Add(Employee employee)
