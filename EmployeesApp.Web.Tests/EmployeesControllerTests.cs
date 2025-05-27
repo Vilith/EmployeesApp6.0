@@ -1,5 +1,6 @@
 ﻿using EmployeesApp.Application.Employees.Interfaces;
 using EmployeesApp.Domain.Entities;
+using EmployeesApp.Infrastructure.Persistance.Repositories;
 using EmployeesApp.Web.Controllers;
 using EmployeesApp.Web.Views.Employees;
 using Microsoft.AspNetCore.Cors.Infrastructure;
