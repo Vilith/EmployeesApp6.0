@@ -5,6 +5,7 @@ using EmployeesApp.Web.Views.Employees;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using System.ComponentModel.DataAnnotations;
 
 namespace EmployeesApp.Web.Tests
 {
@@ -33,27 +34,55 @@ namespace EmployeesApp.Web.Tests
         }
 
         [Theory]
-        [InlineData("email@email.com", "namn", 3, false)]
+        [InlineData("email@email.com", "namn", 3, false)]        
+        [InlineData("", "name", 4, false)]
+        [InlineData("mail@mail.com", "", 4, false)]
         [InlineData("other@other.com", "other", 4, true)]
         public void Create_WithValidViewModel_ReturnsViewResult(string email, string Name, int botcheck, bool expected)
         {
             //Arrange
             var viewModel = new CreateVM { Email = email, Name = Name, BotCheck = botcheck };
-            var employeeService = new Mock<IEmployeeService>();
+            var mockService = new Mock<IEmployeeService>();
+            var controller = new EmployeesController(mockService.Object);
 
-            var employeeController = new EmployeesController(employeeService.Object);
+            ValidateModel(viewModel, controller);
 
-            if (!expected)
-            {
-                employeeController.ModelState.AddModelError("false", "ViewModel invalid");
-            }
             //Act
-            var result = employeeController.Create(viewModel);
-
+            var result = controller.Create(viewModel);
 
             //Assert
-            //Assert.Equal(viewModel, result);
-            Assert.IsType<ViewResult>(result);
+            if (expected)
+            {
+                var redirect = Assert.IsType<RedirectToActionResult>(result);                               
+                Assert.Equal("Index", redirect.ActionName);
+                mockService.Verify(s => s.Add(It.Is<Employee>(e =>
+                    e.Email == email &&
+                    e.Name == Name)), Times.Once);
+            }
+            else
+            {
+                var view = Assert.IsType<ViewResult>(result); 
+                Assert.Null(view.ViewName);
+                mockService.Verify(s => s.Add(It.IsAny<Employee>()), Times.Never);
+            }           
         }
+
+        //Helpfunction for validation of the model state 
+        #region[Help-function]
+        private static void ValidateModel(object model, Controller controller) //Alt+enter helped us here
+        {
+            var validationContext = new ValidationContext(model, null, null);
+            var validationResults = new List<ValidationResult>();
+            Validator.TryValidateObject(model, validationContext, validationResults, true);
+
+            foreach (var validationResult in validationResults)
+            {
+                foreach (var memberName in validationResult.MemberNames)
+                {
+                    controller.ModelState.AddModelError(memberName, validationResult.ErrorMessage);
+                }
+            }
+        }
+        #endregion 
     }
 }
