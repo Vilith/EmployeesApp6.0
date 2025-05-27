@@ -35,6 +35,29 @@ namespace EmployeeApp.Application.Tests
             Assert.Equal("lisa@ajax.com", catchEmployee.Email);
         }
 
+        [Fact]
+        public void AddEmployee_WithRightCredentials_WillAddEmployeeToListMoq()
+        {
+
+            // Arrange
+            var mockRepo = new Mock<IEmployeeRepository>();
+            var service = new EmployeeService(mockRepo.Object);                      
+                      
+            var employee = new Employee
+            {
+                Name = "lisa",
+                Email = "lisa@ajax.com"
+            };
+
+            // Act
+            service.Add(employee);
+
+            // Assert
+            mockRepo.Verify(r => r.Add(It.Is<Employee>(e => 
+            e.Name == "Lisa" && 
+            e.Email == "lisa@ajax.com")), Times.Once);
+        }
+
         //public void Add(Employee employee)
         //{
 
